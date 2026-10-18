@@ -30,7 +30,7 @@ jobs:
     name: Build # DO NOT CHANGE THIS NAME, we rely on it for INSTALL_K3S_PR functionality
     runs-on: ${{ (!contains(inputs.platforms, 'amd64') && !contains(inputs.platforms, 'windows/') && !contains(inputs.platforms, 'riscv64') && (github.repository_owner == 'k3s-io' && 'cncf-ubuntu-16-64-arm' || 'ubuntu-24.04-arm')) 
       || (github.repository_owner == 'k3s-io' && 'cncf-ubuntu-16-64-x86' || 'ubuntu-24.04') }}
-    timeout-minutes: 30
+    timeout-minutes: 120
     steps:
     - name: Checkout K3s
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -41,6 +41,12 @@ jobs:
         version: type=image,tag=29
         daemon-config: '{"features":{"containerd-snapshotter":true}}'
         set-host: true
+
+    - name: Set up QEMU
+      if: contains(inputs.platforms, 'riscv64')
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: riscv64
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
@@ -64,6 +70,7 @@ jobs:
           linux/amd64) artifact_name='k3s-amd64' ;;
           linux/arm64) artifact_name='k3s-arm64' ;;
           linux/arm/v7) artifact_name='k3s-arm' ;;
+          linux/riscv64) artifact_name='k3s-riscv64' ;;
           windows/amd64) artifact_name='k3s-windows' ;;
           *) artifact_name='k3s-all' ;;
         esac
