@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest # Runs on standard runner, docker pulls with --platform
     strategy:
       matrix:
-        arch: [amd64, arm64, arm]
+        arch: [amd64, arm64, arm, riscv64]
 
     steps:
       - name: Checkout code
