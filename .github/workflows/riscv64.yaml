@@ -1,0 +1,24 @@
+name: Build K3s RISC-V
+
+on:
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - "Makefile"
+      - "go.mod"
+      - "go.sum"
+      - "scripts/**"
+      - ".github/workflows/build-k3s.yaml"
+      - ".github/workflows/riscv64.yaml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build-riscv64:
+    name: Build RISC-V (riscv64)
+    uses: ./.github/workflows/build-k3s.yaml
+    with:
+      platforms: linux/riscv64
+      upload-build: true
