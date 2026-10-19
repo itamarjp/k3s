@@ -193,6 +193,9 @@ case ${OS} in
 
     echo Building runc
     pushd ./build/src/github.com/opencontainers/runc
+    if [ "${ARCH}" = "riscv64" ]; then
+      sed -i '/case C.C_ARCH_SH:/,+1d; /case C.C_ARCH_SHEB:/,+1d' vendor/github.com/seccomp/libseccomp-golang/seccomp_internal.go
+    fi
     rm -f runc
     make GO="${GO}" EXTRA_FLAGS="-gcflags=\"all=${GCFLAGS}\"" EXTRA_LDFLAGS="$LDFLAGS" BUILDTAGS="$RUNC_TAGS" $RUNC_STATIC
     popd
